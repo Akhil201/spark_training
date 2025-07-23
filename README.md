@@ -123,6 +123,13 @@ INSERT INTO ORDERS VALUES('200133', '1200.00', '400.00', '06/29/2008', 'C00009',
 
 
 
-I conveted these to csv files and uploaded to data folder
+I converted these to csv files and uploaded to data folder
+
+Refer this link for creating new sbt project
+https://medium.com/@ariellemesser/building-a-scala-spark-library-with-sbt-and-installing-on-databricks-acd5d8715c4
+
+Use coursier for managing scala versions and jenv for java in mac OS
+https://www.mungingdata.com/java/jenv-multiple-versions-java/#:~:text=Here's%20the%20command%20to%20install,%2FJavaVirtualMachines%2Fadoptopenjdk%2D11.
+regarding couriser, it is being updated in setup.txt file
 
 
