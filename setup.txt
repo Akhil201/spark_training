@@ -1,3 +1,30 @@
+To setup this project you need pre-requisites as follows, this document prepared that you are using mac keeping in mind
+
+install
+java - use jenv for managing java in macos
+scala - use couriser for managing scala in macos
+sbt - install using brew
+spark
+
+
+Refer this link for creating new sbt project
+https://medium.com/@suffyan.asad1/spark-essentials-a-guide-to-setting-up-and-running-spark-projects-with-scala-and-sbt-80e2680d3528
+
+Use coursier for managing scala versions and jenv for java in mac OS
+https://www.mungingdata.com/java/jenv-multiple-versions-java/#:~:text=Here's%20the%20command%20to%20install,%2FJavaVirtualMachines%2Fadoptopenjdk%2D11.
+regarding couriser, it is being updated in setup.txt file
+
+
+If you have created project using Intellij or imported into intellij build your project with sbt in intellij
+and your work will be good without compilation errors
+
+
+run sbt command as follows
+
+sbt "run --input-path->data --output-path->output"
+
+
+===========================================================
 Installing couriser in mac os
 Detailed Steps:
 1. Install Coursier:
