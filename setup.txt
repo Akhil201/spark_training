@@ -1,45 +1,49 @@
-To setup this project you need pre-requisites as follows, this document prepared that you are using mac keeping in mind
 
-install
-java - use jenv for managing java in macos
-scala - use couriser for managing scala in macos
-sbt - install using brew
-spark
+We can use csv files under data/customer for our experiments and below or the schemas for the same
+
+Schema of datasets
 
 
-Refer this link for creating new sbt project
-https://medium.com/@suffyan.asad1/spark-essentials-a-guide-to-setting-up-and-running-spark-projects-with-scala-and-sbt-80e2680d3528
-
-Use coursier for managing scala versions and jenv for java in mac OS
-https://www.mungingdata.com/java/jenv-multiple-versions-java/#:~:text=Here's%20the%20command%20to%20install,%2FJavaVirtualMachines%2Fadoptopenjdk%2D11.
-regarding couriser, it is being updated in setup.txt file
-
-
-If you have created project using Intellij or imported into intellij build your project with sbt in intellij
-and your work will be good without compilation errors
-
-
-run sbt command as follows
-
-sbt "run --input-path->data --output-path->output"
+CREATE TABLE  "AGENTS"
+(
+"AGENT_CODE" CHAR(6) NOT NULL PRIMARY KEY,
+"AGENT_NAME" CHAR(40),
+"WORKING_AREA" CHAR(35),
+"COMMISSION" NUMBER(10,2),
+"PHONE_NO" CHAR(15),
+"COUNTRY" VARCHAR2(25)
+);
 
 
-===========================================================
-Installing couriser in mac os
-Detailed Steps:
-1. Install Coursier:
-Open your terminal.
-Run the following command to install Coursier: brew install coursier/formulas/coursier && cs setup
-If you're on an Apple Silicon (M1, M2) Mac, or don't use Homebrew, use this alternative: curl -fL https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-apple-darwin.gz | gzip -d > cs && chmod +x cs && (xattr -d com.apple.quarantine cs || true) && ./cs setup
-If you encounter errors or need to remove an older Coursier installation, consult the Scala documentation for troubleshooting steps.
-2. Install Scala 2.13 using Coursier:
-In the terminal, use the command cs install scala:2.13.x (replace x with the desired minor version, e.g., 16). For example: cs install scala:2.13.16.
-You can also install the Scala compiler with cs install scalac:2.13.x.
-3. Verify the installation:
-Check the installed Scala version using scala -version.
-4. If you need to remove Scala 3.x (optional):
-If you have Scala 3 installed via Homebrew, you can remove it with brew uninstall scala (or brew uninstall scala@3 if you have multiple versions).
-If you installed Scala 3 using Coursier, you can remove it with cs uninstall scala:3.x.x.
-5. Setting up SBT (if needed):
-If you use SBT (Scala Build Tool), you can specify the Scala version in your build.sbt file.
-For example, to use Scala 2.13.16, add the following to your build.sbt:
+
+
+
+CREATE TABLE  "CUSTOMER"
+(	"CUST_CODE" VARCHAR2(6) NOT NULL PRIMARY KEY,
+"CUST_NAME" VARCHAR2(40) NOT NULL,
+"CUST_CITY" CHAR(35),
+"WORKING_AREA" VARCHAR2(35) NOT NULL,
+"CUST_COUNTRY" VARCHAR2(20) NOT NULL,
+"GRADE" NUMBER,
+"OPENING_AMT" NUMBER(12,2) NOT NULL,
+"RECEIVE_AMT" NUMBER(12,2) NOT NULL,
+"PAYMENT_AMT" NUMBER(12,2) NOT NULL,
+"OUTSTANDING_AMT" NUMBER(12,2) NOT NULL,
+"PHONE_NO" VARCHAR2(17) NOT NULL,
+"AGENT_CODE" CHAR(6) NOT NULL REFERENCES AGENTS
+);
+
+
+
+CREATE TABLE  "ORDERS"
+(
+"ORD_NUM" NUMBER(6,0) NOT NULL PRIMARY KEY,
+"ORD_AMOUNT" NUMBER(12,2) NOT NULL,
+"ADVANCE_AMOUNT" NUMBER(12,2) NOT NULL,
+"ORD_DATE" DATE NOT NULL,
+"CUST_CODE" VARCHAR2(6) NOT NULL REFERENCES CUSTOMER,
+"AGENT_CODE" CHAR(6) NOT NULL REFERENCES AGENTS,
+"ORD_DESCRIPTION" VARCHAR2(60) NOT NULL
+);
+
+

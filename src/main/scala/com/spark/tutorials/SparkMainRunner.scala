@@ -1,16 +1,24 @@
 package com.spark.tutorials
 
-import com.spark.tutorials.Analysis._
-import sparktutorial._
-
-
 object SparkMainRunner extends App {
-  val spark = createSparkSession("Spark test", isLocal = true)
 
-  val (inputPath, outputPath) = parseArgs(args = args)
-  val data = spark.read.parquet(s"${inputPath}/*.parquet")
 
-  val analysisResult = calculateAverageTipByPickupLocation(data = data)
+  val (className, inputPath, outputPath) = parseArgs(args = args)
+  private val clazz = Class.forName(className)
+  private val obj = clazz.getDeclaredConstructor().newInstance()
+  private val mainMethod = clazz.getMethod("run", classOf[String], classOf[String])
+  // Call static main method with remaining args
+  mainMethod.invoke(obj, inputPath, outputPath);
 
-  analysisResult.write.option("header", "true").csv(outputPath)
+  private def parseArgs(args: Array[String]): (String, String, String) = {
+    val className = args(0)
+    val inputPath = args(1)
+    val outputPath = args(2)
+    println(s"className: ${className}")
+    println(s"input path: ${inputPath}")
+    println(s"output path: ${outputPath}")
+    (className, inputPath, outputPath)
+  }
+
+
 }
