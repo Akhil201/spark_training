@@ -10,6 +10,10 @@ object SparkMainRunner extends App {
   // Call static main method with remaining args
   mainMethod.invoke(obj, inputPath, outputPath);
 
+  /*
+  Did Not Understand anything 
+  */
+
   private def parseArgs(args: Array[String]): (String, String, String) = {
     val className = args(0)
     val inputPath = args(1)
