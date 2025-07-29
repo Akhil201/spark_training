@@ -47,3 +47,243 @@ CREATE TABLE  "ORDERS"
 );
 
 
+Below are the list of queries for practice
+
+Beginner Level Queries
+Select all agents:
+sql
+SELECT * FROM AGENTS;
+
+Find all customers from a specific city (e.g., 'New York'):
+sql
+SELECT CUST_NAME, CUST_CITY
+FROM CUSTOMER
+WHERE CUST_CITY = 'New York';
+
+List all orders with their order amount greater than 10,000:
+sql
+SELECT ORD_NUM, ORD_AMOUNT
+FROM ORDERS
+WHERE ORD_AMOUNT > 10000;
+
+Get the names and phone numbers of all agents:
+sql
+SELECT AGENT_NAME, PHONE_NO
+FROM AGENTS;
+
+
+Intermediate Level Queries
+
+Find customers along with their agent names:
+sql
+SELECT C.CUST_NAME, A.AGENT_NAME
+FROM CUSTOMER C
+JOIN AGENTS A ON C.AGENT_CODE = A.AGENT_CODE;
+
+List orders placed between two dates:
+sql
+SELECT *
+FROM ORDERS
+WHERE ORD_DATE BETWEEN TO_DATE('2025-01-01', 'YYYY-MM-DD') AND TO_DATE('2025-06-30', 'YYYY-MM-DD');
+
+Find the total outstanding amount of all customers:
+sql
+SELECT SUM(OUTSTANDING_AMT) AS TOTAL_OUTSTANDING
+FROM CUSTOMER;
+
+Retrieve all agents who work in 'New York' area and have a commission above 0.15:
+sql
+SELECT *
+FROM AGENTS
+WHERE WORKING_AREA = 'New York' AND COMMISSION > 0.15;
+
+List all customers sorted by their grade in descending order:
+sql
+SELECT CUST_NAME, GRADE
+FROM CUSTOMER
+ORDER BY GRADE DESC;
+
+
+Advanced Level Queries
+
+Get the total order amount, total advance paid by each customer:
+sql
+SELECT C.CUST_NAME,
+       SUM(O.ORD_AMOUNT) AS TOTAL_ORDER_AMOUNT,
+       SUM(O.ADVANCE_AMOUNT) AS TOTAL_ADVANCE
+FROM CUSTOMER C
+LEFT JOIN ORDERS O ON C.CUST_CODE = O.CUST_CODE
+GROUP BY C.CUST_NAME;
+
+List agents who have not handled any orders:
+sql
+SELECT A.AGENT_CODE, A.AGENT_NAME
+FROM AGENTS A
+LEFT JOIN ORDERS O ON A.AGENT_CODE = O.AGENT_CODE
+WHERE O.ORD_NUM IS NULL;
+
+Find the highest order amount along with customer and agent details:
+sql
+SELECT O.ORD_NUM, O.ORD_AMOUNT, C.CUST_NAME, A.AGENT_NAME
+FROM ORDERS O
+JOIN CUSTOMER C ON O.CUST_CODE = C.CUST_CODE
+JOIN AGENTS A ON O.AGENT_CODE = A.AGENT_CODE
+WHERE O.ORD_AMOUNT = (SELECT MAX(ORD_AMOUNT) FROM ORDERS);
+
+Find the average payment amount grouped by customer grade:
+sql
+SELECT GRADE, AVG(PAYMENT_AMT) AS AVG_PAYMENT
+FROM CUSTOMER
+GROUP BY GRADE;
+
+List customers who have their outstanding amount greater than their opening amount:
+sql
+SELECT CUST_NAME, OPENING_AMT, OUTSTANDING_AMT
+FROM CUSTOMER
+WHERE OUTSTANDING_AMT > OPENING_AMT;
+
+Find the number of orders each agent has processed and total order amount:
+sql
+SELECT A.AGENT_NAME, COUNT(O.ORD_NUM) AS NO_OF_ORDERS, COALESCE(SUM(O.ORD_AMOUNT),0) AS TOTAL_ORDERS_AMOUNT
+FROM AGENTS A
+LEFT JOIN ORDERS O ON A.AGENT_CODE = O.AGENT_CODE
+GROUP BY A.AGENT_NAME;
+
+Get customers who have not placed any order:
+sql
+SELECT C.CUST_NAME
+FROM CUSTOMER C
+LEFT JOIN ORDERS O ON C.CUST_CODE = O.CUST_CODE
+WHERE O.ORD_NUM IS NULL;
+
+Display each order with order description and the agent’s commission percentage:
+sql
+SELECT O.ORD_NUM, O.ORD_DESCRIPTION, A.COMMISSION
+FROM ORDERS O
+JOIN AGENTS A ON O.AGENT_CODE = A.AGENT_CODE;
+
+Find details of customers whose name starts with 'A' and agent’s working area is 'Mumbai':
+sql
+SELECT C.CUST_NAME, C.CUST_CITY, A.WORKING_AREA
+FROM CUSTOMER C
+JOIN AGENTS A ON C.AGENT_CODE = A.AGENT_CODE
+WHERE C.CUST_NAME LIKE 'A%' AND A.WORKING_AREA = 'Mumbai';
+
+Calculate total orders and their average advance amount for each working area of agents:
+sql
+SELECT A.WORKING_AREA, COUNT(O.ORD_NUM) AS TOTAL_ORDERS, AVG(O.ADVANCE_AMOUNT) AS AVG_ADVANCE
+FROM AGENTS A
+JOIN ORDERS O ON A.AGENT_CODE = O.AGENT_CODE
+GROUP BY A.WORKING_AREA;
+
+List agents whose commission is above average commission of all agents:
+sql
+SELECT AGENT_NAME, COMMISSION
+FROM AGENTS
+WHERE COMMISSION > (SELECT AVG(COMMISSION) FROM AGENTS);
+
+
+1. Subquery in the WHERE Clause
+List all customers whose outstanding amount is above the average outstanding amount of all customers:
+sql
+SELECT CUST_NAME, OUTSTANDING_AMT
+FROM CUSTOMER
+WHERE OUTSTANDING_AMT > (SELECT AVG(OUTSTANDING_AMT) FROM CUSTOMER);
+
+2. Subquery in the SELECT Clause
+Show each customer's name and how their opening amount compares to the maximum opening amount:
+sql
+SELECT CUST_NAME,
+       OPENING_AMT,
+       (SELECT MAX(OPENING_AMT) FROM CUSTOMER) AS MAX_OPENING_AMT
+FROM CUSTOMER;
+
+3. Inline View (Derived Table) for Aggregation
+List agents and the total number of orders they handled, showing only those with more orders than the average agent:
+sql
+SELECT agent_stats.AGENT_NAME, agent_stats.ORDER_COUNT
+FROM (
+    SELECT A.AGENT_NAME, COUNT(O.ORD_NUM) AS ORDER_COUNT
+    FROM AGENTS A
+    LEFT JOIN ORDERS O ON A.AGENT_CODE = O.AGENT_CODE
+    GROUP BY A.AGENT_NAME
+) agent_stats
+WHERE agent_stats.ORDER_COUNT > (
+    SELECT AVG(order_count)
+    FROM (
+        SELECT COUNT(O.ORD_NUM) AS order_count
+        FROM AGENTS A
+        LEFT JOIN ORDERS O ON A.AGENT_CODE = O.AGENT_CODE
+        GROUP BY A.AGENT_NAME
+    )
+);
+
+4. Correlated Subquery
+Find customers whose payment amount is above the average payment for their city:
+sql
+SELECT C.CUST_NAME, C.CUST_CITY, C.PAYMENT_AMT
+FROM CUSTOMER C
+WHERE C.PAYMENT_AMT > (
+    SELECT AVG(C2.PAYMENT_AMT)
+    FROM CUSTOMER C2
+    WHERE C2.CUST_CITY = C.CUST_CITY
+);
+
+5. Correlated Subquery with EXISTS
+List all agents who have handled at least one order for a customer in the same working area:
+sql
+SELECT A.AGENT_CODE, A.AGENT_NAME
+FROM AGENTS A
+WHERE EXISTS (
+    SELECT 1
+    FROM CUSTOMER C
+    JOIN ORDERS O ON C.CUST_CODE = O.CUST_CODE
+    WHERE O.AGENT_CODE = A.AGENT_CODE
+      AND C.WORKING_AREA = A.WORKING_AREA
+);
+
+6. Inline View with ROW_NUMBER()
+Get the largest order for each customer (inline view for ranking):
+sql
+SELECT ORD_NUM, CUST_CODE, ORD_AMOUNT
+FROM (
+    SELECT ORD_NUM, CUST_CODE, ORD_AMOUNT,
+           ROW_NUMBER() OVER (PARTITION BY CUST_CODE ORDER BY ORD_AMOUNT DESC) AS rn
+    FROM ORDERS
+)
+WHERE rn = 1;
+
+7. Subquery in FROM Clause (Inline View) with Aggregation
+Show each city and the count of customers with outstanding amount above 5,000:
+sql
+SELECT T.CUST_CITY, T.CNT
+FROM (
+    SELECT CUST_CITY, COUNT(*) AS CNT
+    FROM CUSTOMER
+    WHERE OUTSTANDING_AMT > 5000
+    GROUP BY CUST_CITY
+) T;
+
+8. Correlated Update Example
+
+Increase the commission of any agent if their total order amount exceeds $50,000:
+sql
+UPDATE AGENTS
+SET COMMISSION = COMMISSION + 0.01
+WHERE AGENT_CODE IN (
+    SELECT AGENT_CODE
+    FROM ORDERS
+    GROUP BY AGENT_CODE
+    HAVING SUM(ORD_AMOUNT) > 50000
+);
+
+Apply salting for all keys in a column
+Apply salting for specific keys in column
+example code of repartition and coalesce
+
+
+
+
+
+
+

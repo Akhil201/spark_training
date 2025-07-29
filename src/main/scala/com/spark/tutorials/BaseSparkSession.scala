@@ -2,23 +2,23 @@ package com.spark.tutorials
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
+trait DataframeSet
+
 abstract class BaseSparkSession {
 
   protected val spark: SparkSession = createSparkSession("Spark test", isLocal = true)
 
   // Hook methods to be overridden
-  protected def loadData(inputPath: String): DataFrame
+  protected def loadData(inputPath: String): DataframeSet
 
-  protected def process(df: DataFrame): DataFrame
+  protected def process[T <: DataframeSet](dfSet: T): Unit
 
-  protected def save(df: DataFrame, outputPath: String): Unit = {
-    df.write.option("header", "true").csv(outputPath)
-  }
+  protected def save(outputPath: String): Unit
 
   final def run(inputPath: String, outputPath: String): Unit = {
-    val df = loadData(inputPath)
-    val result = process(df)
-    save(result, outputPath)
+    val dfSet = loadData(inputPath)
+    process(dfSet)
+    save(outputPath)
     spark.stop()
   }
 
