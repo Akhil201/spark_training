@@ -22,7 +22,7 @@ and your work will be good without compilation errors
 run sbt command as follows
 
 sbt "run com.spark.tutorials.Analysis data output"
-
+sbt "run com.spark.tutorials.beginner.BeginnerSparkJob data output"
 
 We have used Template method design pattern for creating spark session and executing the business logic. 
 If any new class is created take com.spark.tutorials.Analysis as reference and implement required methods from base class
