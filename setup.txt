@@ -281,7 +281,9 @@ Apply salting for all keys in a column
 Apply salting for specific keys in column
 example code of repartition and coalesce
 
-
+reduceByKey
+groupByKey
+combineByKey
 
 
 

@@ -10,7 +10,8 @@ val sparkVersion = "3.2.3"
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion,
   "org.apache.spark" %% "spark-sql" % sparkVersion,
-  "org.apache.spark" %% "spark-mllib" % sparkVersion
+  "org.apache.spark" %% "spark-mllib" % sparkVersion,
+  "org.apache.spark" % "spark-streaming_2.13" % sparkVersion
 )
 
 dependencyOverrides += "log4j" % "log4j" % "1.2.17" % "provided"

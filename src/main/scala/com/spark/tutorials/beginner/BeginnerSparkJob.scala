@@ -229,52 +229,23 @@ class BeginnerSparkJob extends BaseSparkSession {
 //          |) where rn > 0 order by rn DESC""".stripMargin).show(1000)
 
 
-    val windowSpec = Window
-      .partitionBy(trim(col("CUST_CODE")))
-        .orderBy(col("ORD_AMOUNT").desc)
+      /**
+       * Query to show data as Map(String, List)
+       */
 
-    val withRowNumberOrderDF =  ordersDataFrameSch
-      .withColumn("rn", row_number().over(windowSpec))
-
-    withRowNumberOrderDF.select($"rn", $"ORD_NUM", $"CUST_CODE", $"ORD_AMOUNT")
-        .where($"rn" === lit(1) ).show()
-
-
-
-    val saltSize = 10
-    val saltedDF = ordersDataFrameSch.withColumn("SALT", (rand() * saltSize).cast(IntegerType))
-        .withColumn("SALTED_KEY", concat_ws("_", col("ORD_NUM"), col("SALT")))
-        saltedDF.show()
-    val partialSumDF = saltedDF.groupBy("SALTED_KEY")
-        .agg(sum("ORD_AMOUNT").alias("PARTIAL_SUM"))
-        partialSumDF.show()
-    val finalSumDF = partialSumDF.withColumn("MAIN_KEY", split(col("SALTED_KEY"), "_")(0))
-        .groupBy("MAIN_KEY")
-        .agg(sum("PARTIAL_SUM").alias("final_sum"))
-        finalSumDF.show()
-
-
-
-
-
-
-
-
-
-
-
-
-//        spark.sql(
-//          """select CUST_CODE
-//            FROM customersDataFrame where trim(CUST_CODE) in (select trim(CUST_CODE) from ordersDataFrame)""").show()
+//      spark.sql(
+//        """select CUST_CODE, AGENT_CODE, count(1)
+//          |from ordersDataFrame group by CUST_CODE, AGENT_CODE""".stripMargin).show()
 //
-//        spark.sql("select trim(CUST_CODE) from ordersDataFrame order by trim(CUST_CODE)").show()
-//        spark.sql("select trim(CUST_CODE) from customersDataFrame order by trim(CUST_CODE)").show()
+//      spark.sql("""select CUST_CODE, AGENT_CODE, collect_list(ORD_AMOUNT) as lst
+//                  |from ordersDataFrame group by CUST_CODE, AGENT_CODE""".stripMargin).show(100,100)
 
 
+    val lst:List[Integer] = List(1,2,null,4,5,null,7,8)
+        val df = lst.toDF("ID")
 
-
-
+        val windowSpec = Window.orderBy(col("ID"))
+        df.withColumn("ID", row_number().over(windowSpec) ).show(1000)
 
 
 
