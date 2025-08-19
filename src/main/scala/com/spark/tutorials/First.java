@@ -1,5 +1,5 @@
 package com.spark.tutorials;
 
-public class First {
+public class First extends App {
 
 }
